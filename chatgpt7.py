@@ -11,22 +11,22 @@ import speech_recognition as sr
 import openai
 from gpt_index import SimpleDirectoryReader, GPTListIndex, GPTSimpleVectorIndex, LLMPredictor, PromptHelper
 from langchain.chat_models import ChatOpenAI
-from gtts import gTTS
 import sys
 import speech_recognition as sr
 import pyttsx3
 import cv2
+
 app = Flask(__name__)
 app.secret_key = '\x96O\xae\x93\x829\x8f\xda\xfa>}ZV!\xba\x8f\xc4qV\xb2Xl\xda\x0f'
 file_path = ""
-directory_path = "C:/Users/hande/OneDrive/Desktop/chatboat/venv/vectorIndex/"
 #os.environ["OPENAI_API_KEY"] = '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'
 #openai = "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" 
 api_key = "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"
 os.environ["OPENAI_API_KEY"] = api_key
 ALLOWED_EXTENSIONS = {'pdf', 'txt'} 
 
-conn = mysql.connector.connect(user='root', password='root', host='localhost', database='employee')
+#conn = mysql.connector.connect(user='root', password='root', host='localhost', database='employee')
+conn = mysql.connector.connect(user='root', password='passwordSAMSAN!1234', host='localhost', database='employee')
 cursor = conn.cursor()
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -36,6 +36,7 @@ engine = pyttsx3.init()
 def index():
     return render_template('globalchatbot.html')
 def construct_index(directory_path):
+    print("Inside construct_index. Directory path:", directory_path)
     max_input_size = 40960
     num_outputs = 5120
     max_chunk_overlap = 200
@@ -71,7 +72,7 @@ def signup():
 def login():
     if request.method == 'POST':
         userDetails = request.form
-        print(userDetails)
+        #print(userDetails)
         name = userDetails['name']
         emailId = userDetails['email']
         password = userDetails['password']
@@ -138,7 +139,8 @@ def global_chat():
 def uploadfile():
     return render_template('upload.html')
     
-@app.route('/upload', methods=['GET','POST'])
+
+@app.route('/upload', methods=['GET', 'POST'])
 def upload():
     global file_path
     try:
@@ -146,38 +148,54 @@ def upload():
 
         if uploaded_file and allowed_file(uploaded_file.filename):
             filename = secure_filename(uploaded_file.filename)
-            file_path = os.path.join("C:/Users/hande/OneDrive/Desktop/chatboat/venv/vectorIndex/", filename)
+            current_script_dir = os.path.dirname(os.path.abspath(__file__))
+            static_folder_path = os.path.join(current_script_dir, "vectorIndex")
+            os.makedirs(static_folder_path, exist_ok=True)
+            file_path = os.path.join(static_folder_path, filename)
+            
             uploaded_file.save(file_path)
-            print(file_path)
+            print("File saved at:", file_path)
+
             if filename.endswith('.pdf'):
+                print("Processing PDF file...")
                 with open(file_path, 'rb') as pdf_file:
                     pdf_data = base64.b64encode(pdf_file.read()).decode('utf-8')
-                    index= construct_index('C:/Users/hande/OneDrive/Desktop/chatboat/venv/vectorIndex/')
+                    folder_path = os.path.dirname(file_path)
+                    index = construct_index(folder_path)
+                    print("PDF file processed successfully.")
                     return render_template('chatboat.html')
 
             elif filename.endswith('.txt'):
+                print("Processing TXT file...")
                 with open(file_path, 'r') as file:
                     all_text = file.read()
-                index= construct_index('C:/Users/hande/OneDrive/Desktop/chatboat/venv/vectorIndex/')
+                folder_path = os.path.dirname(file_path)
+                index = construct_index(folder_path)
+                print("TXT file processed successfully.")
                 return render_template('chatboat.html')        
         else:
             return 'Invalid file type. Allowed types: .pdf, .txt'
     except Exception as e:
         return f"An error occurred: {str(e)}"
+
 @app.route("/uploadlogo", methods=['GET', 'POST'])
 def uploadlogo():
     global image_path
     global input_image_base64
     image_file = request.files["file"]
-    image_path = "C:/Users/hande/OneDrive/Desktop/chatboat/venv/static/" + image_file.filename  
+    current_script_dir = os.path.dirname(os.path.abspath(__file__))
+    static_folder = os.path.join(current_script_dir, "static")
+    os.makedirs(static_folder, exist_ok=True)
+    image_path = os.path.join(static_folder, secure_filename(image_file.filename))
     image_file.save(image_path)
-    input_image = cv2.imread(image_path)
+    input_image = cv2.imread(image_path)    
     if input_image is not None:
         _, input_image_png = cv2.imencode('.jpg', input_image)
         input_image_base64 = base64.b64encode(input_image_png).decode('utf-8')
         return render_template('chatboat.html', image_path=image_path, input_image_png=input_image_base64)
     else:
         return "Failed to load the image."
+
 '''@app.route('/create_index', methods=['POST'])
 def create_index():
     try:
