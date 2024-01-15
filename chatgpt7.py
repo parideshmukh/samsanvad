@@ -55,6 +55,7 @@ def adminlogin():
         name = userDetails['name']
         emailId = userDetails['email']
         password = userDetails['password']
+        print(f"Received form data - Name: {name}, Email: {emailId}, Password: {password}")
         correct_name = "Samsanlabs"
         correct_email = "samsanlabs123@gmail.com"
         correct_password = "samsan123"
@@ -62,9 +63,12 @@ def adminlogin():
         if name == correct_name and emailId == correct_email and password == correct_password:
             session['name'] = name
             session['emailId'] = emailId
+            
             return render_template('user.html')
         else:
-            return render_template('admin.html', error_message="Invalid credentials. Please try again.")
+            error_message = "Invalid credentials. Please try again."
+            print(f"Error: {error_message}")
+            return render_template('admin.html', error_message=error_message)
     return render_template('admin.html')
 
 @app.route('/signup', methods=['POST'])
