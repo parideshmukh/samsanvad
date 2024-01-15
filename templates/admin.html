@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title> Login Page</title>
+    <title> Admin Login Page</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -127,51 +127,14 @@
 </head>
 <body>
     <div class="container">
-        <span class="logo"> AI Bot</span>
-        <form action="/login" method="post" >
+        <span class="logo"> Admin dashbord</span>
+        <form action="/adminLogin" method="post" >
             <input type="text" name="name" class="input-field" placeholder="Username" required>
             <input type="email" name="email" class="input-field" placeholder="Email" required>
             <input type="password" name="password" id="loginPassword" class="input-field" placeholder="Password" required>
             <input type="submit" class="btn" value="Log In">
         </form>
-        <p class="forgot-password-link" onclick="showForgotPasswordPopup()">
-            <a href="#">Forgot Password?</a>
-        </p>
-    </div>  
-    <div class="forgot-password-popup" id="forgotPasswordPopup">
-        <div class="forgot-password-box">
-            <h2>Forgot Password?</h2>
-            <form action="/reset_password" method="post" onsubmit="return validatePassword()">
-                <input type="text" name="name" class="input-field" placeholder="Username" required>
-                <input type="email" name="email" class="input-field" placeholder="Email" required>
-                <input type="password" name="new_password" id="newPassword" class="input-field" placeholder="New Password" required>
-                <input type="password" name="confirm_password" id="confirmPassword" class="input-field" placeholder="Confirm Password" required>
-                <input type="submit" class="btn" style="margin-left:150px" value="Reset Password">
-            </form>
-            <p class="login-link" onclick="hideForgotPasswordPopup()">Cancel</p>
-        </div>
-    </div>
-    <script>
-        function showForgotPasswordPopup() {
-            document.getElementById('forgotPasswordPopup').style.display = 'flex';
-        }
-    
-        function hideForgotPasswordPopup() {
-            document.getElementById('forgotPasswordPopup').style.display = 'none';
-        }
-    
-        function validatePassword() {
-            var newPassword = document.getElementById('newPassword').value;
-            var confirmPassword = document.getElementById('confirmPassword').value;
-    
-            if (newPassword !== confirmPassword) {
-                alert("New Password and Confirm Password do not match");
-                return false;
-            }
-    
-            return true;
-        }
-    </script>  
+    </div>    
 
 </body>
 </html>

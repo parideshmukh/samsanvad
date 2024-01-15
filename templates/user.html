@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title> Signup and Login Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url("/static/ai.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 380px;
+            text-align: center;
+        }
+
+        .logo {
+            font-family: 'Grand Hotel', cursive;
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+            margin: 10px 0;
+            background-color: #fafafa;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #aaa;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            margin: 10px 0;
+            background-color: #3897f0;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #3578e5;
+        }
+
+        .signup-text {
+            margin: 20px 0;
+            font-size: 14px;
+            color: #262626;
+        }
+
+        .signup-text a {
+            text-decoration: none;
+            color: #3897f0;
+            font-weight: 600;
+        }
+
+        .login-link {
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .login-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-box {
+            width: 450px;
+            height: 490px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="logo"> AI Bot</span>
+        <form action="/signup" method="post">
+            <input type="text" name="name" class="input-field" placeholder="Username" required>
+            <input type="email" name="email" class="input-field" placeholder="Email" required>
+            <input type="password" name="password" class="input-field" placeholder="Password" required>
+            <input type="submit" class="btn" value="Sign Up">
+        </form>
+        <div id="error-message" style="color: red;">
+            {% if error_message %}
+                {{ error_message }}
+            {% endif %}
+        </div>
+        <form action="/user_list" method="post">
+            <input type="submit" class="btn" value="Show user">
+        </form>
+    </div>
+    
+</body>
+</html>

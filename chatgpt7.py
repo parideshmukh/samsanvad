@@ -25,8 +25,8 @@ api_key = "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"
 os.environ["OPENAI_API_KEY"] = api_key
 ALLOWED_EXTENSIONS = {'pdf', 'txt'} 
 
-#conn = mysql.connector.connect(user='root', password='root', host='localhost', database='employee')
-conn = mysql.connector.connect(user='root', password='passwordSAMSAN!1234', host='localhost', database='employee')
+conn = mysql.connector.connect(user='root', password='root', host='localhost', database='employee')
+#conn = mysql.connector.connect(user='root', password='passwordSAMSAN!1234', host='localhost', database='employee')
 cursor = conn.cursor()
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -48,6 +48,25 @@ def construct_index(directory_path):
     index.save_to_disk('index.json')
     print("index file createdSSS")
     return index
+@app.route('/adminLogin', methods=['GET', 'POST'])
+def adminlogin():
+    if request.method == 'POST':
+        userDetails = request.form
+        name = userDetails['name']
+        emailId = userDetails['email']
+        password = userDetails['password']
+        correct_name = "Samsanlabs"
+        correct_email = "samsanlabs123@gmail.com"
+        correct_password = "samsan123"
+
+        if name == correct_name and emailId == correct_email and password == correct_password:
+            session['name'] = name
+            session['emailId'] = emailId
+            return render_template('user.html')
+        else:
+            return render_template('admin.html', error_message="Invalid credentials. Please try again.")
+    return render_template('admin.html')
+
 @app.route('/signup', methods=['POST'])
 def signup():
     if request.method == 'POST':
@@ -61,12 +80,17 @@ def signup():
 
         if existing_user:
             print('User with the given name and email already exists in the database')
-            return "User already exists. Please login or try a different name/email."
+            return render_template('user.html', error_message="Already exit")
         cursor.execute("INSERT INTO chatboatuser1 (name, emailId, password) VALUES (%s, %s, %s)", (name, emailId, password))
         conn.commit()
         session['emailId'] = emailId
-        return render_template('chatboat.html',emailId=emailId)  
-
+        return render_template('user.html', error_message="Create user successfully")
+ 
+@app.route('/user_list',methods=['GET','POST'])
+def user_list():
+    cursor.execute("SELECT * FROM chatboatuser1")
+    users = cursor.fetchall()
+    return render_template('userlist.html', users=users)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -88,7 +112,23 @@ def login():
         if name != "correct_name" or emailId != "correct_email" or password != "correct_password":
             return render_template('globalchatbot.html', error_message="Invalid credentials. Please try again.")
         return "Name and Email not found. Please try again or sign up."
-
+@app.route('/reset_password', methods=['POST'])
+def reset_password():
+    if request.method == 'POST':
+        userDetails = request.form
+        name = userDetails['name']
+        emailId = userDetails['email']
+        new_password = userDetails['new_password']
+        cursor.execute("SELECT * FROM chatboatuser1 WHERE name = %s AND emailId = %s", (name, emailId))
+        existing_user = cursor.fetchone()
+        if existing_user:
+            user_id = existing_user[0] 
+            cursor.execute("UPDATE chatboatuser1 SET password = %s WHERE id = %s", (new_password, user_id))
+            conn.commit()
+            return render_template('globalchatbot.html', message="Password reset successfully.")
+        else:
+            return render_template('globalchatbot.html', error_message="User not found. Please provide correct name and email.")
+        
 @app.route('/chatbot')
 def chatbot():
         return render_template('chatboat.html')
