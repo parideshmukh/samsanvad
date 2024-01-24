@@ -21,7 +21,7 @@ app.secret_key = '\x96O\xae\x93\x829\x8f\xda\xfa>}ZV!\xba\x8f\xc4qV\xb2Xl\xda\x0
 file_path = ""
 #os.environ["OPENAI_API_KEY"] = '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'
 #openai = "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" 
-api_key = "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"
+api_key = "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"
 os.environ["OPENAI_API_KEY"] = api_key
 ALLOWED_EXTENSIONS = {'pdf', 'txt'} 
 
@@ -165,23 +165,7 @@ def local_chat():
     #else:
         #return jsonify(response.response)
 
-@app.route('/global_chat',methods=['POST'])
-def global_chat():
-    input_text = request.json.get('message')
-    print("input_textinput_text", input_text)
-    response = openai.Completion.create(
-    engine="text-davinci-003",
-    #prompt=prompt_text,
-    prompt=f"You: {input_text}\nChatGPT:",
-    temperature=0.7,
-    max_tokens=100
-    )
-    chatbot_response = response.choices[0].text.strip()
-    print("chatbot_responsechatbot_response",chatbot_response)
-    return jsonify({'message': chatbot_response})
-@app.route('/uploadfile')
-def uploadfile():
-    return render_template('upload.html')
+
     
 
 @app.route('/upload', methods=['GET', 'POST'])

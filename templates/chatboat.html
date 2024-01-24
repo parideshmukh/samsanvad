@@ -232,7 +232,7 @@
         
         .bot {
             float: left;
-            background-color: #E8E8E8; 
+            background-color: #fff; 
         }       
 
         
@@ -384,7 +384,21 @@
             width: 70%;
             margin-bottom:10px;
         }
+        .footer-container {
+            position: fixed;
+            bottom: 0; 
+            padding: 10px;
+            color: #fff; 
+        }
+        .footer-container a {
+            color: #fff; 
+            text-decoration: none;
+            transition: color 0.3s; 
+        }
 
+        .footer-container a:hover {
+            color: #ffcc00; 
+        }
 
     </style>
 </head>
@@ -421,6 +435,9 @@
                 <div id="previous-chat" class="chat-history" style="margin-bottom: 4px;display: none;">
                     <h3>Previous Chat</h3>
                 </div>
+            </div>
+            <div class="footer-container">
+                <a href="https://www.samsanlabs.com/contact-us/" target="_blank">Samsan Technische Labs PVT LTD</a>
             </div>
             <div id="settings-modal" class="modal">
                 <div class="modal-content">
