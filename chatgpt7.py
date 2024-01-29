@@ -21,7 +21,7 @@ app.secret_key = '\x96O\xae\x93\x829\x8f\xda\xfa>}ZV!\xba\x8f\xc4qV\xb2Xl\xda\x0
 file_path = ""
 #os.environ["OPENAI_API_KEY"] = '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'
 #openai = "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" 
-api_key = "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"
+api_key = "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"
 os.environ["OPENAI_API_KEY"] = api_key
 ALLOWED_EXTENSIONS = {'pdf', 'txt'} 
 
@@ -147,23 +147,23 @@ def local_chat():
         index = GPTSimpleVectorIndex.load_from_disk('index.json')
         input_text_with_role_and_context = f"{input_text}. You act as {user_role}. Context: {context}"
         print("input text, role, and context", input_text_with_role_and_context)
-        #response = index.query(input_text_with_role_and_context, response_mode="compact")
-        response = {"response": "When refuelling at a self-service stand, it is important to take the necessary safety precautions, regardless of age, number of vehicles in the household, or household income. Make sure to turn off the engine and any other electrical equipment before refuelling. Do not smoke or use any open flames near the refuelling area. Wear protective clothing, such as gloves and safety glasses, to protect yourself from any potential spills. Make sure to keep any children away from the refuelling area. Additionally, be aware of any potential hazards, such as fuel spills, and take the necessary steps to clean them up. It is also important to consider the preferences of those who are likely to purchase a two-wheeler in the next 5 years, as indicated by the survey results. Factors such as style, environmental performance, safety, reliability, comfort, cargo-carrying capacity, and replacement part availability are all important considerations when refuelling at a self-service stand."}
+        response = index.query(input_text_with_role_and_context, response_mode="compact")
+        #response = {"response": "When refuelling at a self-service stand, it is important to take the necessary safety precautions, regardless of age, number of vehicles in the household, or household income. Make sure to turn off the engine and any other electrical equipment before refuelling. Do not smoke or use any open flames near the refuelling area. Wear protective clothing, such as gloves and safety glasses, to protect yourself from any potential spills. Make sure to keep any children away from the refuelling area. Additionally, be aware of any potential hazards, such as fuel spills, and take the necessary steps to clean them up. It is also important to consider the preferences of those who are likely to purchase a two-wheeler in the next 5 years, as indicated by the survey results. Factors such as style, environmental performance, safety, reliability, comfort, cargo-carrying capacity, and replacement part availability are all important considerations when refuelling at a self-service stand."}
     else:
         return jsonify({'error': 'Invalid request. Please provide either "input_text" or "speech_transcript".'})
 
-    if response and response["response"] is not None:
-        formatted_response = response["response"].replace('\n', '<br>')
-        print("final response", formatted_response)
-        return jsonify(formatted_response)
-    #if response and response.response is not None:
-        #formatted_response = response.response.replace('\n', '<br>')
+    #if response and response["response"] is not None:
+        #formatted_response = response["response"].replace('\n', '<br>')
         #print("final response", formatted_response)
         #return jsonify(formatted_response)
-    else:
-        return jsonify(response["response"])
+    if response and response.response is not None:
+        formatted_response = response.response.replace('\n', '<br>')
+        print("final response", formatted_response)
+        return jsonify(formatted_response)
     #else:
-        #return jsonify(response.response)
+        #return jsonify(response["response"])
+    else:
+        return jsonify(response.response)
 
 
     
@@ -211,6 +211,8 @@ def uploadlogo():
     global image_path
     global input_image_base64
     image_file = request.files["file"]
+    #if image_file is None:
+        #return render_template('chatboat.html')
     current_script_dir = os.path.dirname(os.path.abspath(__file__))
     static_folder = os.path.join(current_script_dir, "static")
     os.makedirs(static_folder, exist_ok=True)

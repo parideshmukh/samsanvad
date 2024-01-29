@@ -644,35 +644,6 @@
             </div>
 
               <hr width="100%" color="red" />
-
-            <div id="settings-modal" class="modal">
-                <div class="modal-content">
-                  <span class="close" id="close-settings-btn">&times;</span>
-                    <p style="margin-top: 5px; font-size: 18px" ><b>Select File</b>:</p><form id="file_form" method="POST" action="/upload" enctype="multipart/form-data">
-                        <input type="file" name="file" style="font-size: 18px">
-                        <button type="submit" class="generate-button" style="margin-left: 296px;width:150px;font-size: 18px">Upload</button>
-                    </form>
-                    <p style="margin-top: 5px;font-size: 18px"><b>Display Title:</b></p><form id="titel-form">
-                        <input type="text" id="doc-title" name="doc-title" placeholder="Enter  title of document to be displayed" style="font-size: 18px" required>
-                        <button type="submit" class="generate-button" style="margin-left: 150px;width:150px;font-size: 18px">Set Title</button>
-                    </form>
-                    <p style="margin-bottom: 15px;font-size: 18px"><b>Enter Persona:</b></p><form id="role-form">
-                        <input type="text" id="user-role" name="user-role" placeholder="Enter user persona" style="font-size: 18px" required>
-                        <button type="submit" class="generate-button" style="margin-left: 150px;width:150px;font-size: 18px">Set Role</button>
-                    </form>
-                    <div class="container40">
-                        <p style="margin-bottom: 2px;font-size: 18px;"><b>Enter Context:</b></p><form id="contex-form">
-                            <textarea id="user-context" name="user-context" placeholder="Enter user context" rows="4"  style="font-size: 18px" required></textarea>
-                            <button type="submit" class="generate-button" style="margin-left: 27px;font-size: 18px;width:150px;margin-top=-20px;">Set Context</button>
-                        </form>
-                    </div>
-                    <p style="margin-bottom: 1px;font-size: 18px"><b>Upload Logo: </b></p><form id="logo-from" action="/uploadlogo" method="post" enctype="multipart/form-data"style="background-color: #FFFFFF;">
-                        <input type="file" name="file" style="font-size: 18px"><button id="Browsing" onclick="show()" class="generate-button"style="margin-left: 255px;width:150px;font-size: 18px">Upload</button>
-                    </form>
-                </div>
-              </div>
-        </div>
-    </div>  
    
     <script>
         var modal = document.getElementById('settings-modal');
@@ -936,7 +907,15 @@
                 document.getElementById('Browsing').style.display = "block";
                 imageShown = true;
             }
-        }      
+        }  
+        function validateLogoUpload() {
+            var logoInput = document.getElementById('logoFile'); 
+            if (logoInput.files.length === 0) {
+                alert('Please select a logo file before uploading.');
+                return false; 
+            }
+            return true;
+        }  
     </script>
 </body>
 </html>
