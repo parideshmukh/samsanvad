@@ -21,7 +21,7 @@ app.secret_key = '\x96O\xae\x93\x829\x8f\xda\xfa>}ZV!\xba\x8f\xc4qV\xb2Xl\xda\x0
 file_path = ""
 #os.environ["OPENAI_API_KEY"] = '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'
 #openai = "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" 
-api_key = "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"
+api_key = "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"
 os.environ["OPENAI_API_KEY"] = api_key
 ALLOWED_EXTENSIONS = {'pdf', 'txt'} 
 
