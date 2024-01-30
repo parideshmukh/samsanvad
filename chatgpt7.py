@@ -9,7 +9,8 @@ import os
 import base64
 import speech_recognition as sr
 import openai
-from gpt_index import SimpleDirectoryReader, GPTListIndex, GPTSimpleVectorIndex, LLMPredictor, PromptHelper
+#from gpt_index import SimpleDirectoryReader, GPTListIndex, GPTSimpleVectorIndex, LLMPredictor, PromptHelper
+from llama_index import GPTVectorStoreIndex, SimpleDirectoryReader, LLMPredictor, PromptHelper, ServiceContext,StorageContext, load_index_from_storage
 from langchain.chat_models import ChatOpenAI
 import sys
 import speech_recognition as sr
@@ -21,8 +22,9 @@ app.secret_key = '\x96O\xae\x93\x829\x8f\xda\xfa>}ZV!\xba\x8f\xc4qV\xb2Xl\xda\x0
 file_path = ""
 #os.environ["OPENAI_API_KEY"] = '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'
 #openai = "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" 
-api_key = "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"
-os.environ["OPENAI_API_KEY"] = api_key
+api_key = os.getenv('OPENAI_KEY')
+
+#os.environ["OPENAI_API_KEY"] = api_key
 ALLOWED_EXTENSIONS = {'pdf', 'txt'} 
 
 conn = mysql.connector.connect(user='root', password='root', host='localhost', database='employee')
@@ -41,11 +43,17 @@ def construct_index(directory_path):
     num_outputs = 5120
     max_chunk_overlap = 200
     chunk_size_limit = 6000
-    prompt_helper = PromptHelper(max_input_size, num_outputs, max_chunk_overlap, chunk_size_limit=chunk_size_limit)
-    llm_predictor = LLMPredictor(llm=ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", max_tokens=num_outputs))
+    # prompt_helper = PromptHelper(max_input_size, num_outputs, max_chunk_overlap, chunk_size_limit=chunk_size_limit)
+    # llm_predictor = LLMPredictor(llm=ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", max_tokens=num_outputs))
+    # rebuild storage context
+    # storage_context = StorageContext.from_defaults(persist_dir='./storage')
+    # load index
+    # index = load_index_from_storage(storage_context)
     documents = SimpleDirectoryReader(directory_path).load_data()
-    index = GPTSimpleVectorIndex(documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
-    index.save_to_disk('index.json')
+    print('documents',documents)
+    index = GPTVectorStoreIndex.from_documents(documents)
+    index.storage_context.persist()
+    #index.save_to_disk('index.json')
     print("index file createdSSS")
     return index
 @app.route('/adminLogin', methods=['GET', 'POST'])
@@ -139,19 +147,26 @@ def chatbot():
 from flask import jsonify
 
 @app.route('/local_chat', methods=['POST'])
+
 def local_chat():
+
     user_role = request.json.get('user_role')
+
     if 'input_text' in request.json:
         input_text = request.json.get('input_text')
         context = request.json.get('context')
-        index = GPTSimpleVectorIndex.load_from_disk('index.json')
+        #index = GPTSimpleVectorIndex.load_from_disk('index.json')
+        storage_context = StorageContext.from_defaults(persist_dir='./storage')
+        index = load_index_from_storage(storage_context)
+        # index = GPTVectorStoreIndex.from_documents('index.json')
+        query_engine = index.as_query_engine()
         input_text_with_role_and_context = f"{input_text}. You act as {user_role}. Context: {context}"
         print("input text, role, and context", input_text_with_role_and_context)
-        response = index.query(input_text_with_role_and_context, response_mode="compact")
+        # response = query_engine.query(input_text_with_role_and_context, response_mode="compact")
+        response = query_engine.query(input_text_with_role_and_context)
         #response = {"response": "When refuelling at a self-service stand, it is important to take the necessary safety precautions, regardless of age, number of vehicles in the household, or household income. Make sure to turn off the engine and any other electrical equipment before refuelling. Do not smoke or use any open flames near the refuelling area. Wear protective clothing, such as gloves and safety glasses, to protect yourself from any potential spills. Make sure to keep any children away from the refuelling area. Additionally, be aware of any potential hazards, such as fuel spills, and take the necessary steps to clean them up. It is also important to consider the preferences of those who are likely to purchase a two-wheeler in the next 5 years, as indicated by the survey results. Factors such as style, environmental performance, safety, reliability, comfort, cargo-carrying capacity, and replacement part availability are all important considerations when refuelling at a self-service stand."}
     else:
         return jsonify({'error': 'Invalid request. Please provide either "input_text" or "speech_transcript".'})
-
     #if response and response["response"] is not None:
         #formatted_response = response["response"].replace('\n', '<br>')
         #print("final response", formatted_response)
@@ -164,7 +179,6 @@ def local_chat():
         #return jsonify(response["response"])
     else:
         return jsonify(response.response)
-
 
     
 
