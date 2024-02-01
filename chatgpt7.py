@@ -21,10 +21,10 @@ app = Flask(__name__)
 app.secret_key = '\x96O\xae\x93\x829\x8f\xda\xfa>}ZV!\xba\x8f\xc4qV\xb2Xl\xda\x0f'
 file_path = ""
 #os.environ["OPENAI_API_KEY"] = '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'
-#openai = "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" 
-api_key = os.getenv('OPENAI_KEY')
+#api_key = "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" 
 
 #os.environ["OPENAI_API_KEY"] = api_key
+openai.api_key = os.getenv('OPENAI_API_KEY')
 ALLOWED_EXTENSIONS = {'pdf', 'txt'} 
 
 conn = mysql.connector.connect(user='root', password='root', host='localhost', database='employee')
@@ -50,8 +50,8 @@ def construct_index(directory_path):
     # load index
     # index = load_index_from_storage(storage_context)
     documents = SimpleDirectoryReader(directory_path).load_data()
-    print('documents',documents)
     index = GPTVectorStoreIndex.from_documents(documents)
+    print(index)
     index.storage_context.persist()
     #index.save_to_disk('index.json')
     print("index file createdSSS")
@@ -209,7 +209,7 @@ def upload():
 
             elif filename.endswith('.txt'):
                 print("Processing TXT file...")
-                with open(file_path, 'r') as file:
+                with open(file_path, 'r', encoding='utf-8') as file:
                     all_text = file.read()
                 folder_path = os.path.dirname(file_path)
                 index = construct_index(folder_path)
