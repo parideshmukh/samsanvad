@@ -835,6 +835,13 @@
        
             userInput.value = '';
         }
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function(stream) {
+            console.log('Microphone access granted');
+            })
+        .catch(function(error) {
+            console.error('Error accessing microphone:', error);
+        });
         function speakText(text) {
             var utterance = new SpeechSynthesisUtterance(text);
             window.speechSynthesis.speak(utterance);
