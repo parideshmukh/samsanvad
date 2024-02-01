@@ -24,7 +24,7 @@ file_path = ""
 #api_key = "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" 
 
 #os.environ["OPENAI_API_KEY"] = api_key
-openai.api_key = os.getenv('OPENAI_API_KEY')
+openai.api_key = os.getenv('OPENAI_KEY')
 ALLOWED_EXTENSIONS = {'pdf', 'txt'} 
 
 conn = mysql.connector.connect(user='root', password='root', host='localhost', database='employee')
